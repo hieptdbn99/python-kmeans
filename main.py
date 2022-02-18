@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import sklearn as sklearn
 
+
 from sklearn.cluster import KMeans
 
 from scipy.spatial.distance import cdist
@@ -14,14 +15,16 @@ def main():
     # Importing the dataset
     dataset = pd.read_csv('D:\Downloads\Sales_Transactions_Dataset_Weekly.csv')
     #get column 50 to 53
-    X = dataset.iloc[:, 55:58].values
-    print(X)
+    X = dataset.iloc[:, 55:57].values
+    X = np.array(X)
     #declare stop condition to use in calculateNewCluster
 
     
     #elbow method to find the optimal number of clusters
-    Kmean(len(X),X,6)
-    process_test(len(X),X,6)
+
+    # Elbow(9, X)
+    Kmean(len(X),X,5)
+    process_test(X,5)
 
 
 def Elbow(range_k, listObj):
@@ -62,7 +65,6 @@ def calculateNewCluster(c, listObj, k):
     for i in range(k):
         temp = []
         for j in range(n):
-            m = c[i]
             temp.append(L1distance_n_dim(c[i],listObj[j]))
         distance.append(temp)
     min_dis_idx = np.argmin(distance,axis=0)
@@ -70,50 +72,22 @@ def calculateNewCluster(c, listObj, k):
     for j in range(k):
         temp = []
         for i in range(n):
-            if min_dis_idx[i]==j :
+            if min_dis_idx[i] == j:
                 temp.append(listObj[i])
         cluster.append(temp)
     flag = True
     for i in range(k):
-        ((1,2,3),(2,3,4))
         mean_val = np.mean(cluster[i],axis=0)
-        if L1distance_n_dim(c[i],mean_val) > 0.05:
+        if L1distance_n_dim(c[i],mean_val) > 0.00001:
             c[i] = mean_val
             flag = False
+
+
     return c,flag,cluster
 
 
-
-
-def writeElementCluster(listObj, pred_label, center_point, K):
-    f = open('kmean_test.output', 'w')
-    #print cluster
-    # for i in range(len(listObj)):
-    #     f.write(str(pred_label[i])+'\n')
-    #print center point
-    for i in range(K):
-        f.write(str(center_point[i])+'\n')
-    f.close()
-
-
-
-def process_test(n,listObj,K):
-    kmeans_sklearn = KMeans(n_clusters=K, random_state=0).fit(listObj)
-    center_point = kmeans_sklearn.cluster_centers_
-    pred_label = kmeans_sklearn.predict(listObj)
-    #plt show Oxyz
-    # plt.scatter(listObj[:, 0], listObj[:, 1], c=pred_label, s=50, cmap='viridis')
-    # plt.scatter(center_point[:, 0], center_point[:, 1], c='black', s=200, alpha=0.5)
-    # plt.show()
-    plt.show()
-
-
-    writeElementCluster(listObj,pred_label,center_point,K)
-
-
-
 def avg_square_dis_cluster(c, arraysCluster):
-    #return average of square distance of each point in cluster to the mean of cluster
+    #return average of square distance of each point in cluster to the center of cluster
     n = len(arraysCluster)
     sum_dis = 0
     for i in range(n):
@@ -126,8 +100,6 @@ def L1distance_n_dim(pointA,pointB):
         dis += np.abs(pointA[i]-pointB[i])
     return dis
 
-
-
 def Kmean(n, listObj, k):
     c = []
     for i in range(k):
@@ -136,12 +108,60 @@ def Kmean(n, listObj, k):
     c, flag, cluster = calculateNewCluster(c, listObj, k)
     while flag == False:
         c, flag, cluster = calculateNewCluster(c, listObj, k)
+
+
+    print("Cluster:============\n", cluster[0][0])
+    color = ['black', 'green', 'blue', 'yellow', 'orange', 'pink']
+    for i in range(k):
+        plt.scatter(c[i][0], c[i][1], c='red', s=10)
+        for j in range(len(cluster[i])):
+            #show  pount= cluster[i][j] with same color random by color[]
+            plt.scatter(cluster[i][j][0], cluster[i][j][1], c=color[i], s=2)
+    plt.show()
+
+
     f = open('kmean.output', 'w')
     for i in range(k):
         f.write("Center point {}:{}\n".format(i + 1, c[i]))
+
+    f.write("\n")
+    for i in range(k):
+        f.write("Center point {}:{}\n".format(i + 1, c[i]))
+        for j in range(len(cluster[i])):
+            f.write("{}\n".format(cluster[i][j]))
     f.close()
     return cluster
 
+def writeElementCluster(listObj, pred_label, center_point, K):
+    f = open('kmean_test.output', 'w')
+    #print cluster
+    # for i in range(len(listObj)):
+    #     f.write(str(pred_label[i])+'\n')
+    #print center point
+    for i in range(K):
+        f.write(str(center_point[i]) + '\n')
+    f.write("\n")
+    for i in range(K):
+        f.write('Center point:'+str(center_point[i])+'\n')
+        for j in range(len(listObj)):
+            if pred_label[j] == i:
+                f.write(str(listObj[j])+'\n')
+    f.close()
+
+
+
+def process_test(X,K):
+    X = np.array(X)
+    kmeans_sklearn = KMeans(n_clusters=K, random_state=0).fit(X)
+    center_point = kmeans_sklearn.cluster_centers_
+    pred_label = kmeans_sklearn.predict(X)
+    #show cluster plot
+    plt.scatter(X[:, 0], X[:, 1], c=pred_label, s=10, cmap='viridis')
+    plt.scatter(center_point[:, 0], center_point[:, 1], c='black', s=2, marker='*')
+    plt.show()
+    writeElementCluster(X,pred_label,center_point,K)
+
+    #return stop condition of loop Kmeans
 
 # run main
 if __name__ == "__main__":
