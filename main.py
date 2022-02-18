@@ -105,14 +105,12 @@ def Kmean(n, listObj, k):
     while flag == False:
         c, flag, cluster = calculateNewCluster(c, listObj, k)
 
-
-    print("Cluster:============\n", cluster[0][0])
-    color = ['black', 'green', 'blue', 'yellow', 'orange', 'pink']
+    color = ['brown', 'green', 'blue', 'yellow', 'orange', 'pink']
     for i in range(k):
-        plt.scatter(c[i][0], c[i][1], c='red', s=10)
+        plt.scatter(c[i][0], c[i][1], c='red', s=20, marker='s')
         for j in range(len(cluster[i])):
             #show  pount= cluster[i][j] with same color random by color[]
-            plt.scatter(cluster[i][j][0], cluster[i][j][1], c=color[i], s=2)
+            plt.scatter(cluster[i][j][0], cluster[i][j][1], c=color[i],cmap='viridis',s=3)
     plt.show()
 
 
@@ -152,8 +150,8 @@ def process_test(X,K):
     center_point = kmeans_sklearn.cluster_centers_
     pred_label = kmeans_sklearn.predict(X)
     #show cluster plot
-    plt.scatter(X[:, 0], X[:, 1], c=pred_label, s=10, cmap='viridis')
-    plt.scatter(center_point[:, 0], center_point[:, 1], c='black', s=2, marker='*')
+    plt.scatter(X[:, 0], X[:, 1], c=pred_label, cmap='viridis',s=3)
+    plt.scatter(center_point[:, 0], center_point[:, 1], c='black', s=20, marker='s')
     plt.show()
     writeElementCluster(X,pred_label,center_point,K)
 
