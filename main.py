@@ -13,14 +13,10 @@ from scipy.spatial.distance import cdist
 
 def main():
     # Importing the dataset
-    dataset = pd.read_csv('D:\Downloads\Sales_Transactions_Dataset_Weekly.csv')
-    #get column 50 to 53
+    dataset = pd.read_csv('D:\pythonProject1\Sales_Transactions_Dataset_Weekly.csv')
     X = dataset.iloc[:, 55:57].values
     X = np.array(X)
-    #declare stop condition to use in calculateNewCluster
 
-    
-    #elbow method to find the optimal number of clusters
 
     # Elbow(9, X)
     Kmean(len(X),X,5)
