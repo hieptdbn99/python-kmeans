@@ -10,7 +10,14 @@ from sklearn.cluster import KMeans
 def main():
     # Importing the dataset
     dataset = pd.read_csv('D:\pythonProject1\Sales_Transactions_Dataset_Weekly.csv')
+
+    # 2d will get 2 columns in dataset
+    # X = dataset.iloc[:, 55:57].values
+
+    # 3d will get 3 columns in dataset
     X = dataset.iloc[:, 54:57].values
+
+
     X = np.array(X)
 
     # Elbow(9, X)
@@ -156,6 +163,7 @@ def process_test(X, K):
     kmeans_sklearn = KMeans(n_clusters=K, random_state=0).fit(X)
     center_point = kmeans_sklearn.cluster_centers_
     pred_label = kmeans_sklearn.predict(X)
+
     # show 2d
     # plt.scatter(X[:, 0], X[:, 1], c=pred_label, cmap='viridis', s=3)
     # plt.scatter(center_point[:, 0], center_point[:, 1], c='black', s=20, marker='s')
